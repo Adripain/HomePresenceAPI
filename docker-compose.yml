@@ -1,0 +1,11 @@
+services:
+  home-presence-api:
+    build: .
+    container_name: home-presence-api
+    environment:
+      API_KEY: ${API_KEY}
+    ports:
+      - "2923:2923"
+    volumes:
+      - ./data:/app/data
+    restart: unless-stopped
