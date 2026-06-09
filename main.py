@@ -95,3 +95,11 @@ def presence_status() -> Dict[str, Union[bool, Dict[str, bool]]]:
         "someone_home": any(people.values()),
         "people": people,
     }
+
+
+@app.get("/presence/count", dependencies=[Depends(require_api_key)])
+def presence_count() -> Dict[str, int]:
+    with presence_lock:
+        people = read_presence()
+
+    return {"count": sum(1 for present in people.values() if present)}

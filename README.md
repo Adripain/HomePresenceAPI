@@ -48,6 +48,16 @@ Réponse :
 }
 ```
 
+### `GET /presence/count`
+
+Réponse :
+
+```json
+{
+  "count": 1
+}
+```
+
 ## Configuration
 
 Copier l'exemple d'environnement :
@@ -102,5 +112,12 @@ Statut global :
 
 ```bash
 curl http://localhost:2923/presence/status \
+  -H "x-api-key: une-cle-secrete"
+```
+
+Nombre de personnes présentes :
+
+```bash
+curl http://localhost:2923/presence/count \
   -H "x-api-key: une-cle-secrete"
 ```
