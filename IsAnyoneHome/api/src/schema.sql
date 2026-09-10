@@ -1,10 +1,20 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
-CREATE TYPE member_role AS ENUM ('owner', 'admin', 'member');
-CREATE TYPE presence_source AS ENUM ('region_enter', 'region_exit', 'heartbeat');
-CREATE TYPE automation_trigger AS ENUM ('all_away', 'anyone_arrives');
-CREATE TYPE automation_action AS ENUM ('turn_off_all_lights');
-CREATE TYPE execution_status AS ENUM ('queued', 'delivering', 'completed', 'failed', 'skipped');
+DO $$ BEGIN
+  CREATE TYPE member_role AS ENUM ('owner', 'admin', 'member');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  CREATE TYPE presence_source AS ENUM ('region_enter', 'region_exit', 'heartbeat');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  CREATE TYPE automation_trigger AS ENUM ('all_away', 'anyone_arrives');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  CREATE TYPE automation_action AS ENUM ('turn_off_all_lights');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+DO $$ BEGIN
+  CREATE TYPE execution_status AS ENUM ('queued', 'delivering', 'completed', 'failed', 'skipped');
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
 
 CREATE TABLE IF NOT EXISTS users (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

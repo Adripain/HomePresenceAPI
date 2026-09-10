@@ -1,0 +1,48 @@
+x-api-environment: &api-environment
+  NODE_ENV: production
+  HOST: 0.0.0.0
+  PORT: 3000
+  DATABASE_URL: postgresql://presence:${POSTGRES_PASSWORD}@postgres:5432/presence
+  DATABASE_SSL: "false"
+  SESSION_SIGNING_SECRET_BASE64: ${SESSION_SIGNING_SECRET_BASE64}
+  DATA_ENCRYPTION_KEY_BASE64: ${DATA_ENCRYPTION_KEY_BASE64}
+  APPLE_CLIENT_ID: ${APPLE_CLIENT_ID}
+  TRUST_PROXY: "true"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: presence
+      POSTGRES_USER: presence
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - presence_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U presence -d presence"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    restart: unless-stopped
+
+  migrate:
+    build: .
+    command: ["node", "dist/migrate.js"]
+    environment: *api-environment
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build: .
+    environment: *api-environment
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+      - "127.0.0.1:2924:3000"
+    restart: unless-stopped
+
+volumes:
+  presence_postgres:

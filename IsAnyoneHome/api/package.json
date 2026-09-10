@@ -8,7 +8,8 @@
     "build": "tsc",
     "check": "tsc --noEmit",
     "start": "node --enable-source-maps dist/index.js",
-    "db:migrate": "psql \"$DATABASE_URL\" -v ON_ERROR_STOP=1 -f src/schema.sql"
+    "db:migrate": "tsx src/migrate.ts",
+    "db:migrate:prod": "node dist/migrate.js"
   },
   "engines": {
     "node": ">=22.0.0"

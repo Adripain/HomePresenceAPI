@@ -10,9 +10,10 @@ leur insertion dans PostgreSQL.
 
 - Un sous-domaine dédié, par exemple `api.votre-domaine.tld`, avec un certificat
   TLS valide.
-- PostgreSQL 16+ sur un réseau privé, sans port 5432 ouvert à Internet.
-- Node 22+ ou Docker. L’API écoute par défaut uniquement sur `127.0.0.1`; seul
-  le proxy inverse doit être joignable depuis Internet.
+- PostgreSQL 16+ sur un réseau privé, sans port 5432 ouvert à Internet. Le
+  fichier Compose inclus le lance dans un volume Docker privé.
+- Docker Compose. L’API publiée par Compose écoute uniquement sur
+  `127.0.0.1:2924`; seul le proxy inverse doit être joignable depuis Internet.
 - Un identifiant de service Apple correspondant exactement au bundle iOS dans
   `APPLE_CLIENT_ID`.
 
@@ -20,21 +21,18 @@ leur insertion dans PostgreSQL.
 
 ```sh
 cd api
-npm install
 cp .env.example .env
-# remplir .env avec des secrets distincts : openssl rand -base64 32
-set -a; . ./.env; set +a
-npm run db:migrate
-npm run dev
+# remplir .env avec des secrets distincts : openssl rand -hex 32 et rand -base64 32
+docker compose up -d --build
 ```
 
-Avant le premier déploiement, remplacez le client Apple, l’URL PostgreSQL et les
-deux clés aléatoires. Les deux clés ne doivent pas être stockées dans le dépôt,
-la base de données, ou les logs. Conservez-les dans le coffre de secrets OVH et
-faites une sauvegarde chiffrée hors serveur : perdre `DATA_ENCRYPTION_KEY_BASE64`
-rend les données chiffrées irrécupérables.
+Avant le premier déploiement, remplacez le client Apple et les trois secrets
+aléatoires. Ils ne doivent pas être stockés dans le dépôt, la base de données,
+ou les logs. Conservez-les dans le coffre de secrets OVH et faites une sauvegarde
+chiffrée hors serveur : perdre `DATA_ENCRYPTION_KEY_BASE64` rend les données
+chiffrées irrécupérables.
 
-Exemple de proxy Nginx :
+Exemple de proxy Nginx pour Compose :
 
 ```nginx
 server {
@@ -43,7 +41,7 @@ server {
   # certificats gérés par certbot ou OVH
   client_max_body_size 32k;
   location / {
-    proxy_pass http://127.0.0.1:3000;
+    proxy_pass http://127.0.0.1:2924;
     proxy_set_header Host $host;
     proxy_set_header X-Real-IP $remote_addr;
     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -52,19 +50,9 @@ server {
 }
 ```
 
-Avec Docker, publiez le port uniquement sur la boucle locale, puis laissez Nginx
-être le seul point d’entrée :
-
-```sh
-docker build -t presence-api ./api
-docker run --env-file ./api/.env -e HOST=0.0.0.0 \
-  -p 127.0.0.1:3000:3000 presence-api
-```
-
-Dans ce cas seulement, passez `TRUST_PROXY=true`. Gardez `false` si l’API est
-directement accessible; faire confiance à `X-Forwarded-For` sur une interface
-publique rend la limitation de débit contournable. Le pare-feu doit n’autoriser
-que 80/443; le port applicatif et PostgreSQL restent locaux/privés.
+Compose définit `TRUST_PROXY=true`, car Nginx local transmet les requêtes. Ne
+publiez jamais `2924` ou PostgreSQL sur Internet : le pare-feu doit n’autoriser
+que 80/443 vers Nginx.
 
 ## Ce que protège le service
 
