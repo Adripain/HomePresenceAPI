@@ -1,0 +1,2 @@
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "Tu ubicación se utiliza en segundo plano para detectar tus llegadas y salidas de los hogares que elijas y actualizar su estado de presencia.";
+"NSLocationWhenInUseUsageDescription" = "Tu ubicación se utiliza para definir y comprobar las zonas de tus hogares.";

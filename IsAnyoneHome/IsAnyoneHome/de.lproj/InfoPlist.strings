@@ -1,0 +1,2 @@
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "Dein Standort wird im Hintergrund verwendet, um deine Ankünfte und Abgänge bei den von dir ausgewählten Zuhause zu erkennen und ihren Anwesenheitsstatus zu aktualisieren.";
+"NSLocationWhenInUseUsageDescription" = "Dein Standort wird verwendet, um die Bereiche deiner Zuhause festzulegen und zu prüfen.";

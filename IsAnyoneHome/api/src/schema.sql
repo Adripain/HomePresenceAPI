@@ -31,7 +31,14 @@ CREATE TABLE IF NOT EXISTS devices (
   last_seen_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   revoked_at TIMESTAMPTZ
 );
+ALTER TABLE devices ADD COLUMN IF NOT EXISTS push_token_encrypted TEXT;
+ALTER TABLE devices ADD COLUMN IF NOT EXISTS push_token_hash TEXT;
+ALTER TABLE devices ADD COLUMN IF NOT EXISTS push_language TEXT;
+ALTER TABLE devices ADD COLUMN IF NOT EXISTS push_environment TEXT
+  CHECK (push_environment IN ('sandbox', 'production'));
 CREATE INDEX IF NOT EXISTS devices_user_idx ON devices(user_id);
+CREATE UNIQUE INDEX IF NOT EXISTS devices_push_token_hash_unique_idx
+  ON devices(push_token_hash) WHERE push_token_hash IS NOT NULL;
 
 CREATE TABLE IF NOT EXISTS refresh_sessions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -63,6 +70,16 @@ CREATE TABLE IF NOT EXISTS home_members (
   PRIMARY KEY (home_id, user_id)
 );
 CREATE INDEX IF NOT EXISTS home_members_user_idx ON home_members(user_id);
+
+CREATE TABLE IF NOT EXISTS home_notification_preferences (
+  home_id UUID NOT NULL REFERENCES homes(id) ON DELETE CASCADE,
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  notify_on_arrival BOOLEAN NOT NULL DEFAULT false,
+  notify_on_departure BOOLEAN NOT NULL DEFAULT false,
+  notify_when_empty BOOLEAN NOT NULL DEFAULT false,
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  PRIMARY KEY (home_id, user_id)
+);
 
 CREATE TABLE IF NOT EXISTS invitations (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

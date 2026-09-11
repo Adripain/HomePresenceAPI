@@ -1,0 +1,11 @@
+"Domicile" = "Hogar";
+"Choisir un domicile" = "Elegir un hogar";
+"Affiche le nombre de personnes présentes dans le domicile choisi." = "Muestra el número de personas presentes en el hogar elegido.";
+"Choisissez un domicile" = "Elige un hogar";
+"Maintenez le widget appuyé, puis touchez Modifier le widget." = "Mantén pulsado el widget y toca Editar widget.";
+"Présence du domicile" = "Presencia del hogar";
+"presence.count.none" = "No hay nadie presente";
+"presence.count.one" = "%lld persona presente";
+"presence.count.many" = "%lld personas presentes";
+"widget.empty" = "No hay nadie en casa";
+"widget.detected" = "Presencia detectada";

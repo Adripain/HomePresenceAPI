@@ -6,15 +6,15 @@ import { config } from './config.js';
 import { database } from './database.js';
 import { ApiError } from './security.js';
 import { registerAuthRoutes } from './routes/auth-routes.js';
+import { registerDeviceRoutes } from './routes/device-routes.js';
 import { registerHomeRoutes } from './routes/home-routes.js';
-import { registerRelayRoutes } from './routes/relay-routes.js';
 
 const app = Fastify({
   trustProxy: config.TRUST_PROXY,
   bodyLimit: 32 * 1024,
   logger: {
     level: config.NODE_ENV === 'production' ? 'info' : 'debug',
-    redact: ['req.headers.authorization', 'req.body.identityToken', 'req.body.refreshToken', 'req.body.code', 'req.body.username']
+    redact: ['req.headers.authorization', 'req.body.identityToken', 'req.body.refreshToken', 'req.body.code', 'req.body.username', 'req.body.token']
   },
   disableRequestLogging: config.NODE_ENV === 'production'
 });
@@ -49,8 +49,8 @@ app.setErrorHandler((error, _request, reply) => {
 // Register handlers before route plugins: Fastify encapsulates plugins and an
 // error handler added afterwards would not handle errors thrown by their routes.
 await app.register(registerAuthRoutes);
+await app.register(registerDeviceRoutes);
 await app.register(registerHomeRoutes);
-await app.register(registerRelayRoutes);
 
 const close = async (signal: string) => {
   app.log.info({ signal }, 'Shutting down');

@@ -1,0 +1,2 @@
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "Votre position est utilisée en arrière-plan pour détecter vos arrivées et départs des domiciles que vous choisissez, afin de mettre à jour leur état de présence.";
+"NSLocationWhenInUseUsageDescription" = "Votre position est utilisée pour définir et vérifier les zones de vos domiciles.";

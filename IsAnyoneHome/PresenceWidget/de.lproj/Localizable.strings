@@ -1,0 +1,11 @@
+"Domicile" = "Zuhause";
+"Choisir un domicile" = "Zuhause auswählen";
+"Affiche le nombre de personnes présentes dans le domicile choisi." = "Zeigt die Anzahl der anwesenden Personen im ausgewählten Zuhause.";
+"Choisissez un domicile" = "Wähle ein Zuhause";
+"Maintenez le widget appuyé, puis touchez Modifier le widget." = "Halte das Widget gedrückt und tippe auf „Widget bearbeiten“.";
+"Présence du domicile" = "Anwesenheit zuhause";
+"presence.count.none" = "Niemand ist anwesend";
+"presence.count.one" = "%lld Person anwesend";
+"presence.count.many" = "%lld Personen anwesend";
+"widget.empty" = "Niemand ist zu Hause";
+"widget.detected" = "Anwesenheit erkannt";

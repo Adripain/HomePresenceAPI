@@ -1,0 +1,2 @@
+"NSLocationAlwaysAndWhenInUseUsageDescription" = "Your location is used in the background to detect your arrivals and departures from the homes you choose, so their presence status can be updated.";
+"NSLocationWhenInUseUsageDescription" = "Your location is used to define and check your home areas.";

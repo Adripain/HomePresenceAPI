@@ -3,8 +3,8 @@
 Cette API ne doit jamais être exposée telle quelle avec un mot de passe, une clé
 ou une base de données de démonstration. Elle isole toutes les ressources par
 utilisateur et par rôle dans le domicile (`owner`, `admin`, `member`). Les
-positions et la configuration du pont local sont chiffrées avec AES-256-GCM avant
-leur insertion dans PostgreSQL.
+positions des domiciles et les jetons de notifications sont chiffrés avec
+AES-256-GCM avant leur insertion dans PostgreSQL.
 
 ## Prérequis OVH
 
@@ -72,23 +72,28 @@ l’entrée/la sortie, puis envoie seulement l’état et l’heure. Cela limite
 la collecte de mouvements, sans empêcher un membre autorisé de voir la zone du
 domicile auquel il a été invité.
 
-## Relais local d’éclairage
+## Notifications de présence
 
-Un serveur OVH ne peut pas appeler une adresse privée `192.168.x.x` de votre
-domicile. Le dossier `../bridge-relay` résout ce point : il tourne sur un appareil
-qui reste à la maison (mini-ordinateur, NAS, ou serveur domestique), ouvre
-uniquement des connexions HTTPS sortantes, et récupère les commandes en attente.
+Les notifications sont facultatives et chaque membre choisit, pour chacun de ses
+domiciles, s’il souhaite être averti d’une arrivée, d’un départ ou lorsque le
+domicile devient vide. L’application enregistre le jeton APNs de l’appareil
+uniquement après l’autorisation iOS; l’API ne transmet les alertes qu’aux appareils
+des membres ayant activé au moins une de ces préférences.
 
-1. Dans l’app, associez le pont d’éclairage en appuyant sur son bouton physique.
-2. Créez un code d’installation de relais dans l’app.
-3. Sur l’appareil local, copiez `.env.example` vers un fichier protégé, renseignez
-   l’URL HTTPS et le code, puis lancez `node index.mjs`.
-4. Le premier lancement imprime un secret de relais une seule fois. Placez-le dans
-   `RELAY_SECRET`, retirez le code d’installation puis redémarrez.
+Pour activer l’envoi en production, créez une clé **Apple Push Notifications**
+dans le compte Apple Developer, puis ajoutez ces valeurs dans `.env` :
 
-Le relais n’expose aucun port, et le serveur ne peut lui remettre que les
-commandes de son domicile. Une commande « tout éteindre » est idempotente : une
-répétition ne rallume jamais une lampe.
+```sh
+APNS_TEAM_ID=votre_team_id
+APNS_KEY_ID=votre_key_id
+APNS_PRIVATE_KEY_BASE64="$(base64 -w 0 AuthKey_VOTRE_KEY_ID.p8)"
+APNS_BUNDLE_ID=adriendtz.IsAnyoneHome
+```
+
+Les quatre valeurs sont obligatoires ensemble. Sans elles, l’application garde les
+préférences mais l’API n’envoie rien; elle démarre normalement, ce qui permet de
+déployer l’API avant de créer la clé APNs. Ne versionnez jamais le fichier `.p8` ou
+sa valeur Base64.
 
 ## À opérer avant publication
 

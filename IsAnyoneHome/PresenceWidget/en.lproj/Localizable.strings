@@ -1,0 +1,11 @@
+"Domicile" = "Home";
+"Choisir un domicile" = "Choose a home";
+"Affiche le nombre de personnes présentes dans le domicile choisi." = "Shows the number of people present in the selected home.";
+"Choisissez un domicile" = "Choose a home";
+"Maintenez le widget appuyé, puis touchez Modifier le widget." = "Touch and hold the widget, then tap Edit Widget.";
+"Présence du domicile" = "Home presence";
+"presence.count.none" = "Nobody is present";
+"presence.count.one" = "%lld person present";
+"presence.count.many" = "%lld people present";
+"widget.empty" = "Nobody is at home";
+"widget.detected" = "Presence detected";
