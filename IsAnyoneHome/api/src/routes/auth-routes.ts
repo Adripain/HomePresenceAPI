@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { appleSignIn, authenticate, deleteAccount, refreshSession, revokeCurrentSession } from '../auth.js';
+import { appleSignIn, authenticate, deleteAccount, profile, refreshSession, revokeCurrentSession, updateProfile } from '../auth.js';
 
 export async function registerAuthRoutes(app: FastifyInstance): Promise<void> {
   app.post('/v1/auth/apple', { config: { rateLimit: { max: 10, timeWindow: '1 minute' } } }, async (request, reply) => {
@@ -20,4 +20,8 @@ export async function registerAuthRoutes(app: FastifyInstance): Promise<void> {
     await deleteAccount(request);
     return reply.code(204).send();
   });
+
+  app.get('/v1/profile', { preHandler: authenticate }, async (request) => profile(request));
+
+  app.put('/v1/profile', { preHandler: authenticate }, async (request) => updateProfile(request));
 }

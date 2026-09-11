@@ -26,6 +26,7 @@ const refreshBody = z.object({
   refreshToken: z.string().min(32).max(256),
   deviceId: z.string().uuid()
 });
+const updateProfileBody = z.object({ displayName: z.string().trim().min(1).max(80) });
 
 export type SessionPayload = {
   accessToken: string;
@@ -134,6 +135,26 @@ export async function revokeCurrentSession(request: FastifyRequest): Promise<voi
     'UPDATE refresh_sessions SET revoked_at = now() WHERE user_id = $1 AND device_id = $2 AND revoked_at IS NULL',
     [request.auth.userId, request.auth.deviceId]
   );
+}
+
+export async function profile(request: FastifyRequest): Promise<{ displayName: string }> {
+  const result = await database.query<{ display_name: string | null }>(
+    'SELECT display_name FROM users WHERE id = $1 AND deleted_at IS NULL',
+    [request.auth.userId]
+  );
+  return { displayName: result.rows[0]?.display_name ?? '' };
+}
+
+export async function updateProfile(request: FastifyRequest): Promise<{ displayName: string }> {
+  const body = updateProfileBody.parse(request.body);
+  const result = await database.query<{ display_name: string }>(
+    `UPDATE users SET display_name = $1 WHERE id = $2 AND deleted_at IS NULL
+     RETURNING display_name`,
+    [body.displayName, request.auth.userId]
+  );
+  const displayName = result.rows[0]?.display_name;
+  if (!displayName) throw new ApiError(404, 'User not found', 'not_found');
+  return { displayName };
 }
 
 export async function deleteAccount(request: FastifyRequest): Promise<void> {
