@@ -37,10 +37,6 @@ app.get('/healthz', async () => {
   return { ok: true };
 });
 
-await app.register(registerAuthRoutes);
-await app.register(registerHomeRoutes);
-await app.register(registerRelayRoutes);
-
 app.setNotFoundHandler((_request, reply) => reply.code(404).send({ error: 'not_found' }));
 app.setErrorHandler((error, _request, reply) => {
   if (error instanceof ZodError) return reply.code(422).send({ error: 'invalid_request' });
@@ -49,6 +45,12 @@ app.setErrorHandler((error, _request, reply) => {
   app.log.error(error);
   return reply.code(500).send({ error: 'internal_error' });
 });
+
+// Register handlers before route plugins: Fastify encapsulates plugins and an
+// error handler added afterwards would not handle errors thrown by their routes.
+await app.register(registerAuthRoutes);
+await app.register(registerHomeRoutes);
+await app.register(registerRelayRoutes);
 
 const close = async (signal: string) => {
   app.log.info({ signal }, 'Shutting down');
