@@ -22,10 +22,6 @@
 	<string>Votre position est utilisée en arrière-plan pour détecter vos arrivées et départs des domiciles que vous choisissez, afin de mettre à jour leur état de présence.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Votre position est utilisée pour définir et vérifier les zones de vos domiciles.</string>
-	<key>UIBackgroundModes</key>
-	<array>
-		<string>location</string>
-	</array>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UISupportedInterfaceOrientations</key>

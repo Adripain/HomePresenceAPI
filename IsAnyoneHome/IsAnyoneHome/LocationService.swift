@@ -18,8 +18,6 @@ final class LocationService: NSObject, ObservableObject, CLLocationManagerDelega
         authorizationStatus = manager.authorizationStatus
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyHundredMeters
-        manager.pausesLocationUpdatesAutomatically = true
-        manager.allowsBackgroundLocationUpdates = true
     }
 
     var hasAlwaysPermission: Bool { authorizationStatus == .authorizedAlways }
@@ -69,7 +67,6 @@ final class LocationService: NSObject, ObservableObject, CLLocationManagerDelega
             manager.startMonitoring(for: region)
             manager.requestState(for: region)
         }
-        manager.startMonitoringSignificantLocationChanges()
         // A newly created or joined home needs an initial state now; waiting
         // only for the next geographic boundary event leaves it as "away".
         refreshCurrentLocation()
